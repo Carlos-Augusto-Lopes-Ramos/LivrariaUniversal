@@ -11,7 +11,6 @@
 
 if(isset($_POST['login'])){
     $email = $_POST['email'];
-    echo $email;
     $password = $_POST['password'];
     $secret = $_POST['secret'];
     $userController->login($email, $password, $secret);

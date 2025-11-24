@@ -1,7 +1,7 @@
 <?php
 
 $username = 'root';
-$password = '';
+$password = '12345';
 
 try {
     $con = new PDO('mysql:host=localhost:3306;dbname=bookstore', $username, $password);

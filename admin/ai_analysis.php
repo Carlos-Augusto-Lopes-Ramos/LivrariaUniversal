@@ -31,48 +31,63 @@ try {
     // Coletar dados do dashboard
     $totalBooks = count($bookController->getAllActiveBooks());
     $totalUsers = count($userController->getAllUsers());
-    
+
     // Calcular receita total (simulado)
     $books = $bookController->getAllActiveBooks();
     $totalRevenue = 0;
     $totalPrice = 0;
-    
-    foreach ($books as $book) {
-        $totalPrice += $book['price'];
-        // Simular vendas baseadas no ID do livro
-        $sales = ($book['id'] % 10) + 1;
-        $totalRevenue += $book['price'] * $sales;
-    }
-    
-    $avgBookPrice = $totalBooks > 0 ? $totalPrice / $totalBooks : 0;
+    $purchaseDTO = new PurchaseDTO($con);
 
-    // Preparar dados para análise
-    $dashboardData = [
-        'totalBooks' => $totalBooks,
-        'totalUsers' => $totalUsers,
-        'totalRevenue' => $totalRevenue,
-        'avgBookPrice' => $avgBookPrice,
-        'booksByCategory' => [
-            'Ficção' => rand(5, 15),
-            'Não-Ficção' => rand(3, 12),
-            'Técnico' => rand(2, 8),
-            'Infantil' => rand(1, 6),
-            'Outros' => rand(1, 5)
-        ]
-    ];
+    foreach ($books as $book) {
+          $totalPrice += $book['price'];
+          // Simular vendas baseadas no ID do livro
+          $sales = ($book['id'] % 10) + 1;
+          $totalRevenue += $book['price'] * $sales;
+        }
+
+        $avgBookPrice = $totalBooks > 0 ? $totalPrice / $totalBooks : 0;
+
+    $salesData = $purchaseDTO->getSalesByMonth();
+    $pdo = $con;
+      // Busca todas as categorias com total de livros
+      $sql = "
+    SELECT c.nome AS categoria, COUNT(*) AS total
+    FROM livro_categoria lc
+    INNER JOIN categorias c ON c.id = lc.categoria_id
+    GROUP BY lc.categoria_id
+    ORDER BY total DESC
+";
+
+      $stmt = $pdo->query($sql);
+      $categoriasData = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+      // Separar labels e valores
+      $categoryLabels = [];
+      $categoryValues = [];
+
+      foreach ($categoriasData as $row) {
+        $categoryLabels[] = $row['categoria'];
+        $categoryValues[] = (int)$row['total'];
+      }
+
+      // Inserir no dashboardData
+      $dashboardData['booksByCategory'] = [
+        'labels' => $categoryLabels,
+        'values' => $categoryValues
+      ];
 
     // Chamada para API Gemini
     $apiKey = 'AIzaSyBVM3QTN4jQQZiR2BRF55jHteajiR5iOYA';
     $url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" . $apiKey;
-    
+
     $prompt = "Analise os seguintes dados de uma livraria online e forneça insights inteligentes em português brasileiro:
 
 DADOS DA LIVRARIA:
-- Total de livros: {$dashboardData['totalBooks']}
-- Total de usuários: {$dashboardData['totalUsers']}
-- Receita total: R$ " . number_format($dashboardData['totalRevenue'], 2, ',', '.') . "
-- Preço médio dos livros: R$ " . number_format($dashboardData['avgBookPrice'], 2, ',', '.') . "
-- Distribuição por categoria: " . json_encode($dashboardData['booksByCategory']) . "
+- Total de livros: {$totalBooks}
+- Total de usuários: {$totalUsers}
+- Receita total: R$ " . $salesData . "
+- Preço médio dos livros: R$ " . $avgBookPrice . "
+- Distribuição por categoria: " . json_encode($dashboardData['booksByCategory']['labels']) . json_encode($dashboardData['booksByCategory']['values']) . "
 
 Por favor, forneça uma análise estruturada com:
 1. INSIGHTS DE MERCADO: Análise do desempenho atual (2-3 frases)
@@ -118,10 +133,10 @@ Responda de forma clara, objetiva e profissional.";
 
     if ($httpCode === 200 && $response) {
         $result = json_decode($response, true);
-        
+
         if (isset($result['candidates'][0]['content']['parts'][0]['text'])) {
             $aiAnalysis = $result['candidates'][0]['content']['parts'][0]['text'];
-            
+
             // Processar resposta da IA
             $sections = explode("\n", $aiAnalysis);
             $processedAnalysis = [
@@ -130,12 +145,12 @@ Responda de forma clara, objetiva e profissional.";
                 'alerts' => '',
                 'trends' => ''
             ];
-            
+
             $currentSection = '';
             foreach ($sections as $line) {
                 $line = trim($line);
                 if (empty($line)) continue;
-                
+
                 if (stripos($line, 'INSIGHTS') !== false || stripos($line, 'MERCADO') !== false) {
                     $currentSection = 'marketInsights';
                 } elseif (stripos($line, 'RECOMENDAÇÕES') !== false || stripos($line, 'RECOMENDA') !== false) {
@@ -148,7 +163,7 @@ Responda de forma clara, objetiva e profissional.";
                     $processedAnalysis[$currentSection] .= $line . ' ';
                 }
             }
-            
+
             // Limpar e formatar
             foreach ($processedAnalysis as $key => $value) {
                 $processedAnalysis[$key] = trim($value);
@@ -156,7 +171,7 @@ Responda de forma clara, objetiva e profissional.";
                     $processedAnalysis[$key] = 'Análise em andamento...';
                 }
             }
-            
+
             echo json_encode([
                 'success' => true,
                 'analysis' => $processedAnalysis,
@@ -168,7 +183,6 @@ Responda de forma clara, objetiva e profissional.";
     } else {
         throw new Exception('Erro na comunicação com a API Gemini');
     }
-
 } catch (Exception $e) {
     // Fallback com análise simulada
     $fallbackAnalysis = [
@@ -177,7 +191,7 @@ Responda de forma clara, objetiva e profissional.";
         'alerts' => 'Monitorar o preço médio dos livros para manter competitividade no mercado e acompanhar a satisfação dos usuários.',
         'trends' => 'Tendência crescente de digitalização e preferência por livros técnicos e educacionais. O mercado está se movendo para formatos digitais.'
     ];
-    
+
     echo json_encode([
         'success' => false,
         'error' => $e->getMessage(),
@@ -185,4 +199,3 @@ Responda de forma clara, objetiva e profissional.";
         'rawData' => $dashboardData ?? []
     ]);
 }
-?>

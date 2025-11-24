@@ -117,12 +117,12 @@
           <div class="flex items-center space-x-3 p-4 bg-gray-50 rounded-xl border border-gray-200">
             <input 
               type="checkbox" 
-              id="adminLogin" 
+              id="admin" 
               name="admin" 
               value="1"
               class="w-5 h-5 text-primary bg-gray-100 border-gray-300 rounded focus:ring-primary focus:ring-2"
             >
-            <label for="adminLogin" class="text-sm font-medium text-gray-700 flex items-center">
+            <label for="admin" class="text-sm font-medium text-gray-700 flex items-center">
               <i class="fas fa-crown mr-2 text-yellow-500"></i>
               Conta administradora
             </label>

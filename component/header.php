@@ -1,6 +1,3 @@
-<?php
-session_start();
-?>
 
 <!-- VLibras Accessibility -->
 <div vw class="enabled">

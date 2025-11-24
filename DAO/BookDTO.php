@@ -117,26 +117,29 @@ class BookDTO
     }
 
     public function getAllActiveBooks()
-    {
-        $sql = "SELECT 
-                    books.*,
-                    COALESCE(GROUP_CONCAT(authors.name SEPARATOR ', '), 'Autor desconhecido') AS author
-                FROM 
-                    books
-                LEFT JOIN 
-                    book_author ON books.id = book_author.id_book
-                LEFT JOIN 
-                    authors ON book_author.id_author = authors.id
-                WHERE 
-                    books.is_active = 1
-                GROUP BY 
-                    books.id;
-                ";
-        $stmt = $this->con->prepare($sql);
-        $stmt->execute();
-        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        return $books;
-    }
+{
+    $sql = "SELECT 
+                books.*,
+                COALESCE(GROUP_CONCAT(authors.name SEPARATOR ', '), 'Autor desconhecido') AS author,
+                COUNT(purchases.id) AS total_vendas
+            FROM 
+                books
+            LEFT JOIN 
+                book_author ON books.id = book_author.id_book
+            LEFT JOIN 
+                authors ON book_author.id_author = authors.id
+            LEFT JOIN
+                purchases ON purchases.id_book = books.id
+            WHERE 
+                books.is_active = 1
+            GROUP BY 
+                books.id;
+            ";
+
+    $stmt = $this->con->prepare($sql);
+    $stmt->execute();
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
     public function getAllActiveBooksWhoutAuthors()
     {
@@ -413,6 +416,19 @@ class BookDTO
             users ON purchases.id_user = users.id
         ORDER BY 
             purchases.date DESC;
+        ";
+        $stmt = $this->con->prepare($sql);
+        $stmt->execute();
+        $books = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $books;
+    }
+
+    public function getBookQuantity() {
+
+        $sql = 
+        "SELECT id_book, COUNT(*) AS total_vendas
+                FROM purchase
+                GROUP BY id_book;
         ";
         $stmt = $this->con->prepare($sql);
         $stmt->execute();

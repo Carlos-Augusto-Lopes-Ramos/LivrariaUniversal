@@ -7,18 +7,19 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
 
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Gerenciar Livros - Livraria Universal</title>
-  
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Font Awesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
   <!-- Custom CSS -->
   <link href="../assets/css/custom.css" rel="stylesheet">
-  
+
   <script>
     tailwind.config = {
       theme: {
@@ -39,68 +40,11 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
 
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans min-h-screen">
   <!-- Sidebar -->
-  <div class="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
-    <div class="flex items-center justify-center h-16 bg-primary">
-      <h1 class="text-white text-xl font-bold">Admin Panel</h1>
-    </div>
-    
-    <nav class="mt-8">
-      <div class="px-4 space-y-2">
-        <a href="index.php" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors duration-300">
-          <i class="fas fa-home mr-3"></i>
-          Dashboard
-        </a>
-        <a href="books.php" class="flex items-center px-4 py-3 bg-primary text-white rounded-lg">
-          <i class="fas fa-book mr-3"></i>
-          Livros
-        </a>
-        <a href="authors.php" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors duration-300">
-          <i class="fas fa-user-edit mr-3"></i>
-          Autores
-        </a>
-        <a href="purchases.php" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors duration-300">
-          <i class="fas fa-shopping-cart mr-3"></i>
-          Compras
-        </a>
-        <!-- Smart Office 4.0 Menu -->
-        <div class="pt-2 pb-2">
-          <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider px-4">Smart Office 4.0</h3>
-        </div>
-        <a href="smartoffice.php" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors duration-300">
-          <i class="fas fa-th-large mr-3"></i>
-          Visão Geral
-        </a>
-        <a href="smartoffice_projeto.php" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors duration-300">
-          <i class="fas fa-tasks mr-3"></i>
-          Gerenciamento de Projetos
-        </a>
-        <a href="smartoffice_iot.php" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors duration-300">
-          <i class="fas fa-chart-bar mr-3"></i>
-          Monitoramento IoT
-        </a>
-        <a href="smartoffice_analise.php" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors duration-300">
-          <i class="fas fa-chart-line mr-3"></i>
-          Análise e Insights
-        </a>
-        <a href="smartoffice_relatorios.php" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors duration-300">
-          <i class="fas fa-file-alt mr-3"></i>
-          Relatórios Inteligentes
-        </a>
-        <!-- Links originais -->
-        <div class="pt-2 pb-2">
-          <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider px-4">Sistema</h3>
-        </div>
-        <a href="../index.php" class="flex items-center px-4 py-3 text-gray-600 hover:bg-primary hover:text-white rounded-lg transition-colors duration-300">
-          <i class="fas fa-external-link-alt mr-3"></i>
-          Ver Site
-        </a>
-        <a href="../logout.php" class="flex items-center px-4 py-3 text-gray-600 hover:bg-red-500 hover:text-white rounded-lg transition-colors duration-300">
-          <i class="fas fa-sign-out-alt mr-3"></i>
-          Logout
-        </a>
-      </div>
-    </nav>
-  </div>
+ <?php
+  
+    include_once("../component/navBar.php");
+
+  ?>
 
   <!-- Main Content -->
   <div class="lg:ml-64">
@@ -128,13 +72,13 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
     <!-- Content Area -->
     <div class="p-6">
       <!-- Books Table -->
-      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8">
+      <div class="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8 h-96 overflow-auto">
         <div class="p-6 border-b border-gray-200">
           <h2 class="text-xl font-semibold text-gray-800 flex items-center">
             <i class="fas fa-list mr-3 text-primary"></i>
             Lista de Livros
           </h2>
-    </div>
+        </div>
 
         <div class="overflow-x-auto">
           <table class="w-full">
@@ -148,21 +92,24 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Arquivo</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Preço</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-          </tr>
-        </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-          <?php
-          include_once '../DAO/Connection.php';
-          include_once '../DAO/BookDTO.php';
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200 h-full">
+              <?php
+              include_once '../DAO/Connection.php';
+              include_once '../DAO/BookDTO.php';
+              include_once '../DAO/CategoriesDTO.php';
               include_once '../Model/BookModel.php';
+              include_once '../Model/CategoryModel.php';
               include_once '../Controller/BookController.php';
+              include_once '../Controller/CategoryController.php';
 
-          $bookDTO = new BookDTO($con);
-          $bookModel = new BookModel($bookDTO);
-          $bookController = new BookController($bookModel);
-          $books = $bookController->getAllActiveBooks();
-              
-          foreach ($books as $book) {
+              $bookDTO = new BookDTO($con);
+              $bookModel = new BookModel($bookDTO);
+              $bookController = new BookController($bookModel);
+              $books = $bookController->getAllActiveBooks();
+
+              foreach ($books as $book) {
                 echo '<tr class="hover:bg-gray-50 transition-colors duration-200">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">' . $book['id'] . '</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">' . htmlspecialchars($book['title']) . '</td>
@@ -183,11 +130,11 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
                   </form>
                 </td>
                 </tr>';
-          }
-          ?>
-        </tbody>
-      </table>
-    </div>
+              }
+              ?>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Add/Edit Book Form -->
@@ -197,7 +144,7 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
             <i class="fas fa-plus-circle mr-3 text-primary"></i>
             <span id="formTitle">Adicionar Novo Livro</span>
           </h2>
-  </div>
+        </div>
 
         <form action="../bookAction.php" method="POST" enctype="multipart/form-data" class="p-6">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -207,8 +154,8 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
                 <i class="fas fa-book mr-2 text-primary"></i>Título do Livro
               </label>
               <input type="text" id="title" name="title" placeholder="Digite o título do livro" required
-                     class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
-          </div>
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
+            </div>
 
             <!-- Description -->
             <div class="md:col-span-2">
@@ -216,8 +163,8 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
                 <i class="fas fa-align-left mr-2 text-primary"></i>Descrição
               </label>
               <textarea id="description" name="description" rows="4" placeholder="Digite a descrição do livro" required
-                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300 resize-none"></textarea>
-          </div>
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300 resize-none"></textarea>
+            </div>
 
             <!-- Price -->
             <div>
@@ -225,8 +172,8 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
                 <i class="fas fa-dollar-sign mr-2 text-primary"></i>Preço
               </label>
               <input type="number" id="price" name="price" step="0.01" placeholder="49.99" required
-                     class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
-          </div>
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
+            </div>
 
             <!-- ISBN -->
             <div>
@@ -234,8 +181,8 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
                 <i class="fas fa-barcode mr-2 text-primary"></i>ISBN
               </label>
               <input type="text" id="isbn" name="isbn" placeholder="1234567890123" required
-                     class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
-          </div>
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
+            </div>
 
             <!-- Image File -->
             <div>
@@ -243,21 +190,21 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
                 <i class="fas fa-image mr-2 text-primary"></i>Capa do Livro
               </label>
               <input type="file" id="imageFile" name="imageFile" accept="image/*"
-                     class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
-          </div>
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
+            </div>
 
             <!-- PDF File -->
             <div>
-              <label for="filePdf" class="block text-sm font-medium text-gray-700 mb-2">
+              <label for="pdf" class="block text-sm font-medium text-gray-700 mb-2">
                 <i class="fas fa-file-pdf mr-2 text-primary"></i>Arquivo PDF
               </label>
-              <input type="file" id="filePdf" name="pdf" accept="application/pdf"
-                     class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
+              <input type="file" id="pdf" name="pdf" accept="application/pdf"
+                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
+            </div>
           </div>
-        </div>
 
           <div class="mt-8 flex space-x-4">
-        <input type="hidden" name="id" id="bookId">
+            <input type="hidden" name="id" id="bookId">
             <button type="submit" name="create" id="createBtn" class="bg-primary text-white px-8 py-3 rounded-xl font-semibold hover:bg-primary-hover transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg">
               <i class="fas fa-plus mr-2"></i>Criar Livro
             </button>
@@ -268,9 +215,117 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
               <i class="fas fa-times mr-2"></i>Cancelar
             </button>
           </div>
-      </form>
+
+        </form>
+
+      </div>
+
+      <!-- Seção de Criação de Categorias -->
+      <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Gerenciar Categorias</h3>
+        <p class="text-gray-600 mb-4">Adicione novas categorias de livros para organizar melhor o catálogo.</p>
+
+        <!-- Formulário para criar categoria -->
+        <form action="./CategoryService.php" method="POST" class="space-y-4">
+          <div>
+            <label for="category_name" class="block text-sm font-medium text-gray-700">Nome da Categoria</label>
+            <input type="text" id="nome" name="nome" required
+              class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:outline-none"
+              placeholder="Ex: Fantasia, Tecnologia, História...">
+          </div>
+          <button type="submit" name="create" id="create"
+            class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-hover transition-colors duration-300">
+            <i class="fas fa-plus mr-2"></i>Criar Categoria
+          </button>
+        </form>
+        <!-- Lista de Categorias Existentes -->
+        <div class="mt-8 overflow-auto h-96">
+          <h4 class="text-lg font-semibold text-gray-800 mb-2">Categorias Existentes</h4>
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+            <table class="w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200"></tbody>
+
+              <?php
+
+              $categoryDTO = new CategoriesDTO($con);
+              $categoryModel = new CategoryModel($categoryDTO);
+              $categoryController = new CategoryController($categoryModel);
+              $categories = $categoryController->getAllCategories();
+
+              foreach ($categories as $category) {
+                echo '<tr class="hover:bg-gray-50 transition-colors duration-200 w-full">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">' . $category['id'] . '</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">' . htmlspecialchars($category['nome']) . '</td>
+                </tr>';
+              }
+              if ($categories == null) {
+                echo '<p class="text-gray-500">Nenhuma categoria cadastrada ainda.</p>';
+              }
+
+
+              ?>
+              </tbody>
+            </table>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Categoria</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID Livro</th>
+                  
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <?php
+                $categories = $categoryController->getAllCategoriesLink();
+                foreach ($categories as $category) {
+                  echo '<tr class="hover:bg-gray-50 transition-colors duration-200">
+                          <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">' . $category['categoria_id'] . '</td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">' . $category['livro_id'] . '</td>
+                          
+                  </form>
+                </td>
+                </tr>';
+                }
+                ?>
+              </tbody>
+            </table>
+          </div>
+          <div class="mt-8">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Criar Nova Relação</h3>
+            <form action="./CategoryService.php" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label for="id_author" class="block text-sm font-medium text-gray-700 mb-2">
+                  <i class="fas fa-user mr-2 text-primary"></i>ID da Categoria
+                </label>
+                <input type="text" id="id_categoria" name="id_categoria" placeholder="Digite o ID da categoria" required
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
+              </div>
+              <div>
+                <label for="id_book" class="block text-sm font-medium text-gray-700 mb-2">
+                  <i class="fas fa-book mr-2 text-primary"></i>ID do Livro
+                </label>
+                <input type="text" id="id_book" name="id_book" placeholder="Digite o ID do livro" required
+                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-300">
+              </div>
+              <div class="md:col-span-2">
+                <button type="submit" name="link" class="bg-primary text-white px-8 py-3 rounded-xl font-semibold hover:bg-primary-hover transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg">
+                  <i class="fas fa-link mr-2"></i>Criar Relação
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
     </div>
-    </div>
+
   </div>
 
   <script>
@@ -283,7 +338,7 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
       // Find the book row
       const rows = document.querySelectorAll('tbody tr');
       let targetRow = null;
-      
+
       rows.forEach(row => {
         const idCell = row.querySelector('td:first-child');
         if (idCell && idCell.textContent.trim() == bookId) {
@@ -294,7 +349,7 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
       if (!targetRow) return;
 
       const cells = targetRow.querySelectorAll('td');
-      
+
       // Fill form with book data
       document.getElementById('bookId').value = cells[0].textContent.trim();
       document.getElementById('title').value = cells[1].textContent.trim();
@@ -309,7 +364,9 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
       document.getElementById('cancelBtn').classList.remove('hidden');
 
       // Scroll to form
-      document.querySelector('form').scrollIntoView({ behavior: 'smooth' });
+      document.querySelector('form').scrollIntoView({
+        behavior: 'smooth'
+      });
     }
 
     function cancelEdit() {
@@ -325,4 +382,5 @@ if (!isset($_SESSION['email']) || $_SESSION['admin'] != 1) {
     }
   </script>
 </body>
+
 </html>

@@ -7,11 +7,14 @@
 
 
 if(isset($_POST['register'])){
+    $admin = 0;
     $name = $_POST['name'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $secret = $_POST['secret'];
-    $admin = $_POST['admin'] == null ? false : true;
+    if(isset($_POST['admin'])){
+        $admin = 1;
+    }
     $userDTO = new UserDTO($con);
     $userModel = new UserModel($userDTO);
     $userController = new UserController($userModel);
